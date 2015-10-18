@@ -15,6 +15,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
+    <ClInclude Include="parsable.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="cppson.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="jsonField.h">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
