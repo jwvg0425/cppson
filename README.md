@@ -5,13 +5,12 @@ cpp json utility
 
 ```C++
 
-class Test : cppson::Parsable
+class Test : public cppson::Parsable
 {
 public:
 	FIELD(int, field1);
 	FIELD(int, field2);
-	OPTIONAL(int, field3, 0);
-	FIELD(std::vector<int>, field4);
+	FIELD(std::vector<int>, field3);
 };
 
 int main()
@@ -20,8 +19,8 @@ int main()
 	
 	if(t.InitFromFile("test.json"))
 	{
-		printf("%d %d %d", t.field1, t.field2, t.field3); //1 2 0
-		printf("%d", t.field4.size()); //0
+		printf("%d %d %d", t.field1, t.field2); //1 2
+		printf("%d", t.field3.size()); //0
 	}
 	else
 	{
@@ -37,6 +36,6 @@ int main()
 {
 	"field1" : 1,
 	"field2" : 2,
-	"field4" : []
+	"field3" : []
 }
 ```
