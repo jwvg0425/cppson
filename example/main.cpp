@@ -1,14 +1,15 @@
 #include <iostream>
 #include "cppson.h"
 
-class Test
+JSON_CLASS(Test)
 {
-private:
-	FIELD(int, abc);
+public:
+	FIELD(int, a);
+	FIELD(int, b);
+	FIELD(double, c);
 };
 
 int main()
 {
-	Test a;
 	return 0;
 }

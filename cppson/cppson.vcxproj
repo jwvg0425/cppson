@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cppson.h" />
-    <ClInclude Include="jsonField.h" />
+    <ClInclude Include="json.h" />
     <ClInclude Include="parsable.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

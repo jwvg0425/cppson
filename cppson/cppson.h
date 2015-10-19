@@ -1,13 +1,23 @@
 #pragma once
 #include "parsable.h"
-#include "jsonField.h"
-
-#define FIELD(T, N) \
-struct key_ ## N : cppson::JsonKey \
+#define JSON_CLASS(name) class name : public cppson::Parsable<name>
+#define FIELD(type, name) \
+struct Init_ ## name \
 {\
-	virtual const char* key()\
+	Init_ ## name ## () \
+	{ \
+		meta[ #name ] = [](Type* t, cppson::JsonValue value) \
+		{ \
+			value.parse(t->name); \
+		}; \
+	} \
+};\
+struct Meta_ ## name\
+{\
+	Meta_ ## name ## ()\
 	{\
-		return #N ;\
+		static Init_ ## name init;\
 	}\
 };\
-cppson::JsonField<T, key_ ## N> N
+Meta_ ## name meta_ ## name;\
+type name;

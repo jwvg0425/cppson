@@ -21,7 +21,7 @@
     <ClInclude Include="cppson.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
-    <ClInclude Include="jsonField.h">
+    <ClInclude Include="json.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
