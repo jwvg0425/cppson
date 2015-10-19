@@ -5,7 +5,7 @@ cpp json utility
 
 ```C++
 
-class Test : public cppson::Parsable
+JSON_CLASS(Test)
 {
 public:
 	FIELD(int, field1);

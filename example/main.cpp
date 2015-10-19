@@ -1,5 +1,5 @@
 #include <iostream>
-#include "cppson.h"
+#include "src/cppson.hpp"
 
 JSON_CLASS(Test)
 {

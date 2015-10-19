@@ -3,12 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cppson", "cppson\cppson.vcxproj", "{ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example", "example\example.vcxproj", "{40EAD506-4D6F-4A36-8A3B-DDC4F00287A9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12} = {ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{089B7073-9053-4A95-A80A-0205FE7FB076}"
 	ProjectSection(SolutionItems) = preProject
@@ -23,14 +18,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12}.Debug|x64.ActiveCfg = Debug|x64
-		{ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12}.Debug|x64.Build.0 = Debug|x64
-		{ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12}.Debug|x86.ActiveCfg = Debug|Win32
-		{ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12}.Debug|x86.Build.0 = Debug|Win32
-		{ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12}.Release|x64.ActiveCfg = Release|x64
-		{ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12}.Release|x64.Build.0 = Release|x64
-		{ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12}.Release|x86.ActiveCfg = Release|Win32
-		{ECFCFB5C-7F42-4B99-87AB-47BE9FFF4A12}.Release|x86.Build.0 = Release|Win32
 		{40EAD506-4D6F-4A36-8A3B-DDC4F00287A9}.Debug|x64.ActiveCfg = Debug|x64
 		{40EAD506-4D6F-4A36-8A3B-DDC4F00287A9}.Debug|x64.Build.0 = Debug|x64
 		{40EAD506-4D6F-4A36-8A3B-DDC4F00287A9}.Debug|x86.ActiveCfg = Debug|Win32
