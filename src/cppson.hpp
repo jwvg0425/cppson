@@ -2,6 +2,7 @@
 #include <string>
 #include <map>
 #include <sstream>
+#include <fstream>
 #include <functional>
 #include <vector>
 #define JSON_CLASS(name) class name : public cppson::Parsable<name>
@@ -91,10 +92,35 @@ public:
 
 		for (auto m : obj)
 		{
-			if (!T::GetMeta()[m.first](&val, m.second))
+			if (!T::GetMeta().at(m.first)(&val, m.second))
 			{
 				return false;
 			}
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	bool parse(std::vector<T>& val)
+	{
+		static_assert(std::is_base_of<Parsable<T>, T>::value ||
+					std::is_same<int, T>::value ||
+					std::is_same<double, T>::value ||
+					std::is_same<std::string, T>::value ||
+					std::is_same<bool, T>::value, "T must be derived from Parsable<T>, or T must be int or double or std::string or bool.");
+
+		if (type != ARRAY)
+			return false;
+
+		for (auto v : arr)
+		{
+			T p;
+
+			if (v.parse(p))
+				val.push_back(p);
+			else
+				return false;
 		}
 
 		return true;
@@ -168,13 +194,23 @@ public:
 
 	bool ParseFromFile(const std::string& fileName)
 	{
-		return false;
+		std::ifstream file(fileName);
+
+		if (!file.is_open())
+			return false;
+
+		std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+
+		return ParseFromString(str);
 	}
 
 	bool ParseFromString(const std::string& str)
 	{
 		JsonValue value(str);
 
+		Type& t = static_cast<Type&>(*this);
+
+		value.parse(t);
 		return false;
 	}
 	using Meta = std::map<std::string, std::function<bool(Type*, JsonValue)> >;
