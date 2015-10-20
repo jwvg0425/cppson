@@ -391,6 +391,13 @@ bool loadFile(T& value, const std::string& fileName)
 		return false;
 
 	std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	
+	return loadString(value, str);
+}
+
+template<typename T>
+bool loadString(T& value, const std::string& str)
+{
 	std::vector<std::string> tokens;
 
 	if (!tokenize(str, tokens))
@@ -405,7 +412,6 @@ bool loadFile(T& value, const std::string& fileName)
 
 	json.parse(value);
 	return true;
-
 }
 
 template<typename T>
