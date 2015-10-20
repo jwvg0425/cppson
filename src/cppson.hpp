@@ -5,7 +5,7 @@
 #include <fstream>
 #include <functional>
 #include <vector>
-#define JSON_CLASS(name) class name : public cppson::Parsable<name>
+#define JSON_CLASS(name) class name final : public cppson::Parsable<name>
 #define FIELD(type, name) \
 struct Init_ ## name \
 {\
