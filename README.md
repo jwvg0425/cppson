@@ -6,8 +6,8 @@ just add 'src/cppson.hpp' file to your project.
 
 
 # How to use
-JSON_CLASS(className) macro create a class mapped to json file.
-FIELD(type, fieldName) macro create a field mapped to json key - value pair. FIELD macro create meta_fieldName field, but you don't need to bother.
+```JSON_CLASS(className)``` macro create a class mapped to json file.  
+```FIELD(type, fieldName)``` macro create a field mapped to json key - value pair. FIELD macro create meta_fieldName field, but you don't need to bother.
 
 
 ## Example
