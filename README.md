@@ -13,6 +13,7 @@ just add 'src/cppson.hpp' file to your project.
 ## Example
 
 ```C++
+#include "cppson.hpp"
 
 JSON_CLASS(Test)
 {
