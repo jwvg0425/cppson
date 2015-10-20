@@ -1,22 +1,18 @@
 # cppson
-cpp json utility.
 
-[korean](https://github.com/jwvg0425/cppson/blob/master/README_Kor.md)  
+c++에서 json 파싱을 편하게 할 수 있도록 도와주는 라이브러리입니다.
 
-# Setup
-just add 'src/cppson.hpp' file to your project.
-
-# Requirement
-- Visual studio 2013 + 
+# 설치
+src 폴더의 cppson.hpp 파일을 프로젝트에 추가하기만 하면 됩니다.
 
 
-# How to use
-```JSON_CLASS(className)``` macro create a class mapped to json file.  
-```FIELD(type, fieldName)``` macro create a field mapped to json key - value pair. FIELD macro create meta_fieldName field, but you don't need to bother.
+# 사용법
+```JSON_CLASS(className)``` 매크로는 해당 클래스가 자동으로 json file과 대응되게 만들어줍니다.  
+```FIELD(type, fieldName)``` 매크로는 해당 필드가 json 파일에서 해당 필드와 같은 이름의 키 값과 자동으로 대응되게 만들어줍니다. FIELD 매크로는 각각 해당 클래스에 meta_fieldName이라는 멤버를 생성하는데, 이 멤버는 그냥 무시하시면 됩니다.
 
-parse vector from json file, use cppson::loadFile.
+만약 std::vector에 대해 json 파일을 매핑하고 싶다면 cppson::loadFile 함수를 사용하시면 됩니다.
 
-# mapping
+# 대응 관계
 
 | json        | C++            |
 | -------     | -------------- |
@@ -27,9 +23,7 @@ parse vector from json file, use cppson::loadFile.
 | array       | std::vector<T> |
 | object      | JSON_CLASS     |
 
-and not accept **null**.
-
-## Example
+## 예시
 
 ```C++
 #include "cppson.hpp"
