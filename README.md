@@ -4,6 +4,9 @@ cpp json utility.
 # Setup
 just add 'src/cppson.hpp' file to your project.
 
+# Requirement
+- Visual studio 2013 + 
+
 
 # How to use
 ```JSON_CLASS(className)``` macro create a class mapped to json file.  
@@ -11,6 +14,18 @@ just add 'src/cppson.hpp' file to your project.
 
 parse vector from json file, use cppson::loadFile.
 
+# mapping
+
+| json        | C++            |
+| -------     | -------------- |
+| integer     | int            |
+| real number | double         |
+| bool        | bool           |
+| string      | std::string    |
+| array       | std::vector<T> |
+| object      | JSON_CLASS     |
+
+and not accept **null**.
 
 ## Example
 
