@@ -149,10 +149,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\jsoncpp.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\cppson.hpp" />
+    <ClInclude Include="..\src\json.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="test.json" />
