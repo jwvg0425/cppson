@@ -49,7 +49,7 @@ public:
 	template<>
 	bool getValue<bool>()
 	{
-		if (str == "true" || str == "TRUE")
+		if (str == "true")
 		{
 			return true;
 		}
