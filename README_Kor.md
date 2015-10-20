@@ -10,7 +10,7 @@ src 폴더의 cppson.hpp 파일을 프로젝트에 추가하기만 하면 됩니
 | json        | C++            |
 | -------     | -------------- |
 | integer     | int            |
-| real number | double         |
+| real number | float, double  |
 | bool        | bool           |
 | string      | std::string    |
 | array       | std::vector<T> |

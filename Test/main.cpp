@@ -15,6 +15,7 @@ TEST_CASE("parse from string")
 	public:
 		FIELD(int, _int);
 		FIELD(bool, _bool);
+		FIELD(float, _float);
 		FIELD(double, _double);
 		FIELD(std::string, _string);
 
@@ -29,6 +30,7 @@ TEST_CASE("parse from string")
 		/* for 'basic types' section */
 		"\"_int\" : 5,"
 		"\"_bool\" : \"true\","
+		"\"_float\" : 2.13,"
 		"\"_double\" : 2.5,"
 		"\"_string\" : \"hello\","
 
@@ -45,6 +47,7 @@ TEST_CASE("parse from string")
 	SECTION("basic types") {
 		REQUIRE(obj._int == 5);
 		REQUIRE(obj._bool == true);
+		REQUIRE(obj._float == 2.13f);
 		REQUIRE(obj._double == 2.5);
 		REQUIRE(obj._string == "hello");
 	}

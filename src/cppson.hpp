@@ -234,6 +234,17 @@ public:
 	}
 
 	template<>
+	bool parse<float>(float& val)
+	{
+		if (type != SINGLE)
+			return false;
+
+		val = single.getValue<double>();
+
+		return true;
+	}
+
+	template<>
 	bool parse<bool>(bool& val)
 	{
 		if (type != SINGLE)

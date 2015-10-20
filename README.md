@@ -14,7 +14,7 @@ just add 'src/cppson.hpp' file to your project.
 | json        | C++            |
 | -------     | -------------- |
 | integer     | int            |
-| real number | double         |
+| real number | float, double  |
 | bool        | bool           |
 | string      | std::string    |
 | array       | std::vector<T> |
