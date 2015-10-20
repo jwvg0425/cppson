@@ -9,13 +9,6 @@ just add 'src/cppson.hpp' file to your project.
 # Requirement
 - Visual studio 2013 + 
 
-
-# How to use
-```JSON_CLASS(className)``` macro create a class mapped to json file.  
-```FIELD(type, fieldName)``` macro create a field mapped to json key - value pair. FIELD macro create meta_fieldName field, but you don't need to bother.
-
-parse vector from json file, use cppson::loadFile.
-
 # mapping
 
 | json        | C++            |
@@ -28,6 +21,16 @@ parse vector from json file, use cppson::loadFile.
 | object      | JSON_CLASS     |
 
 and not accept **null**.
+
+# How to use
+```JSON_CLASS(className)``` macro create a class mapped to json file.  
+```FIELD(type, fieldName)``` macro create a field mapped to json key - value pair. FIELD macro create meta_fieldName field, but you don't need to bother.
+
+and, call loadFile function(jsonClass.loadFile), automatically mapped json file to that class.
+
+parse vector from json file, use cppson::loadFile function.
+
+see below example.
 
 ## Example
 
@@ -46,6 +49,7 @@ int main()
 {
 	Test t;
 	
+	//call loadFile, json file data mapped to class member variable.
 	if(t.loadFile("test.json"))
 	{
 		printf("%d %d %d\n", t.field1, t.field2); //1 2
