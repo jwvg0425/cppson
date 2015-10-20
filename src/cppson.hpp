@@ -35,19 +35,19 @@ class Single
 {
 public:
 	template<typename R>
-	R GetValue()
+	R getValue()
 	{
 		static_assert(false, "invalid call.");
 	}
 
 	template<>
-	int GetValue<int>()
+	int getValue<int>()
 	{
 		return atoi(str.c_str());
 	}
 
 	template<>
-	bool GetValue<bool>()
+	bool getValue<bool>()
 	{
 		if (str == "true" || str == "TRUE")
 		{
@@ -60,18 +60,18 @@ public:
 	}
 
 	template<>
-	double GetValue<double>()
+	double getValue<double>()
 	{
 		return atof(str.c_str());
 	}
 
 	template<>
-	std::string GetValue<std::string>()
+	std::string getValue<std::string>()
 	{
 		return str;
 	}
 
-	std::string& GetStr()
+	std::string& getStr()
 	{
 		return str;
 	}
@@ -93,7 +93,7 @@ public:
 			type = OBJECT;
 			offset++;
 			
-			while (tokens[offset] != "}")
+			while (offset < tokens.size())
 			{
 				if (tokens[offset] == "\"")
 				{
@@ -111,22 +111,30 @@ public:
 				{
 					offset++;
 				}
+				else if (tokens[offset] == "}")
+				{
+					return offset + 1;
+				}
 				else
 				{
 					return -1;
 				}
 			}
-			return offset + 1;
+			return -1;
 		}
 		else if (tokens[offset] == "[")
 		{
 			type = ARRAY;
 			offset++;
-			while (tokens[offset] != "]")
+			while (offset < tokens.size())
 			{
 				if (tokens[offset] == ",")
 				{
 					offset++;
+				}
+				else if (tokens[offset] == "]")
+				{
+					return offset + 1;
 				}
 				else
 				{
@@ -138,19 +146,19 @@ public:
 					arr.push_back(value);
 				}
 			}
-			return offset + 1;
+			return -1;
 		}
 		else
 		{
 			type = SINGLE;
 			if (tokens[offset] == "\"")
 			{
-				single.GetStr() = tokens[offset + 1];
+				single.getStr() = tokens[offset + 1];
 				return offset + 3;
 			}
 			else
 			{
-				single.GetStr() = tokens[offset];
+				single.getStr() = tokens[offset];
 				return offset + 1;
 			}
 		}
@@ -166,7 +174,7 @@ public:
 
 		for (auto m : obj)
 		{
-			if (!T::GetMeta().at(m.first)(&val, m.second))
+			if (!T::getMeta().at(m.first)(&val, m.second))
 			{
 				return false;
 			}
@@ -206,7 +214,7 @@ public:
 		if (type != SINGLE)
 			return false;
 
-		val = single.GetValue<int>();
+		val = single.getValue<int>();
 
 		return true;
 	}
@@ -217,7 +225,7 @@ public:
 		if (type != SINGLE)
 			return false;
 
-		val = single.GetValue<double>();
+		val = single.getValue<double>();
 
 		return true;
 	}
@@ -228,7 +236,7 @@ public:
 		if (type != SINGLE)
 			return false;
 
-		val = single.GetValue<bool>();
+		val = single.getValue<bool>();
 
 		return true;
 	}
@@ -239,7 +247,7 @@ public:
 		if (type != SINGLE)
 			return false;
 
-		val = single.GetValue<std::string>();
+		val = single.getValue<std::string>();
 
 		return true;
 	}
@@ -266,7 +274,7 @@ class Parsable
 public:
 	using Type = T;
 
-	bool ParseFromFile(const std::string& fileName)
+	bool loadFile(const std::string& fileName)
 	{
 		std::ifstream file(fileName);
 
@@ -275,10 +283,10 @@ public:
 
 		std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
 
-		return ParseFromString(str);
+		return loadString(str);
 	}
 
-	bool ParseFromString(const std::string& str)
+	bool loadString(const std::string& str)
 	{
 		std::vector<std::string> tokens;
 		std::string token;
@@ -375,7 +383,7 @@ public:
 	}
 	using Meta = std::map<std::string, std::function<bool(Type*, JsonValue)> >;
 
-	static const Meta& GetMeta()
+	static const Meta& getMeta()
 	{
 		return meta;
 	}

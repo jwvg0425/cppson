@@ -19,8 +19,9 @@ int main()
 {
 	Test2 t;
 
-	if (t.ParseFromFile("test.json"))
+	if (t.loadFile("test.json"))
 	{
+		printf("parse succed.\n");
 	}
 	else
 	{

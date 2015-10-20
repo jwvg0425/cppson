@@ -27,7 +27,7 @@ int main()
 {
 	Test t;
 	
-	if(t.InitFromFile("test.json"))
+	if(t.loadFile("test.json"))
 	{
 		printf("%d %d %d", t.field1, t.field2); //1 2
 		printf("%d", t.field3.size()); //0
