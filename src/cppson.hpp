@@ -325,6 +325,7 @@ bool tokenize(const std::string& str, OUT std::vector<std::string>& tokens)
 					return false;
 
 				tokens.push_back(str.substr(i, 4));
+				i += 3;
 			}
 			else if (str.substr(i, 5) == "false")
 			{
@@ -332,6 +333,7 @@ bool tokenize(const std::string& str, OUT std::vector<std::string>& tokens)
 					return false;
 
 				tokens.push_back(str.substr(i, 5));
+				i += 4;
 			}
 			else
 			{
