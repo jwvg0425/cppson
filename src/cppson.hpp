@@ -5,6 +5,9 @@
 #include <fstream>
 #include <functional>
 #include <vector>
+#ifndef OUT
+#define OUT
+#endif
 #define JSON_CLASS(name) class name final : public cppson::Parsable<name>
 #define FIELD(type, name) \
 struct Init_ ## name \
@@ -267,6 +270,92 @@ private:
 	std::vector<JsonValue> arr;
 };
 
+bool tokenize(const std::string& str, OUT std::vector<std::string>& tokens)
+{
+	std::string token;
+	std::string space = " \t\r\n";
+	std::string delim = ":{}[],";
+	std::string number = "0123456789.";
+	int state = 0;
+
+	for (size_t i = 0; i < str.size(); i++)
+	{
+		switch (state)
+		{
+		case 0:
+			//ignore space
+			if (space.find(str[i]) != std::string::npos)
+			{
+				if (token.size() != 0)
+				{
+					tokens.push_back(token);
+					token.clear();
+				}
+
+				continue;
+			}
+			//go string
+			else if (str[i] == '"')
+			{
+				if (token.size() != 0)
+					return false;
+
+				tokens.push_back({ str[i] });
+				state = 1;
+			}
+			//one char token
+			else if (delim.find(str[i]) != std::string::npos)
+			{
+				if (token.size() != 0)
+				{
+					tokens.push_back(token);
+					token.clear();
+				}
+				tokens.push_back({ str[i] });
+			}
+			//number
+			else if (number.find(str[i]) != std::string::npos)
+			{
+				token.push_back({ str[i] });
+			}
+			//true or false
+			else if (str.substr(i, 4) == "true")
+			{
+				if (token.size() != 0)
+					return false;
+
+				tokens.push_back(str.substr(i, 4));
+			}
+			else if (str.substr(i, 5) == "false")
+			{
+				if (token.size() != 0)
+					return false;
+
+				tokens.push_back(str.substr(i, 5));
+			}
+			else
+			{
+				return false;
+			}
+			break;
+		case 1:
+			if (str[i] == '"')
+			{
+				tokens.push_back(token);
+				tokens.push_back({ str[i] });
+				token.clear();
+				state = 0;
+			}
+			else
+			{
+				token.push_back({ str[i] });
+			}
+			break;
+		}
+	}
+
+	return true;
+}
 
 template<typename T>
 class Parsable
@@ -276,111 +365,10 @@ public:
 
 	bool loadFile(const std::string& fileName)
 	{
-		std::ifstream file(fileName);
-
-		if (!file.is_open())
-			return false;
-
-		std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
-
-		return loadString(str);
-	}
-
-	bool loadString(const std::string& str)
-	{
-		std::vector<std::string> tokens;
-		std::string token;
-		std::string space = " \t\r\n";
-		std::string delim = ":{}[],";
-		std::string number = "0123456789.";
-		int state = 0;
-
-		for (size_t i = 0; i < str.size(); i++)
-		{
-			switch (state)
-			{
-			case 0:
-				//ignore space
-				if (space.find(str[i]) != std::string::npos)
-				{
-					if (token.size() != 0)
-					{
-						tokens.push_back(token);
-						token.clear();
-					}
-
-					continue;
-				}
-				//go string
-				else if (str[i] == '"')
-				{
-					if (token.size() != 0)
-						return false;
-
-					tokens.push_back({ str[i] });
-					state = 1;
-				}
-				//one char token
-				else if (delim.find(str[i]) != std::string::npos)
-				{
-					if (token.size() != 0)
-					{
-						tokens.push_back(token);
-						token.clear();
-					}
-					tokens.push_back({ str[i] });
-				}
-				//number
-				else if (number.find(str[i]) != std::string::npos)
-				{
-					token.push_back({ str[i] });
-				}
-				//true or false
-				else if (str.substr(i, 4) == "true")
-				{
-					if (token.size() != 0)
-						return false;
-
-					tokens.push_back(str.substr(i, 4));
-				}
-				else if (str.substr(i, 5) == "false")
-				{
-					if (token.size() != 0)
-						return false;
-
-					tokens.push_back(str.substr(i, 5));
-				}
-				else
-				{
-					return false;
-				}
-				break;
-			case 1:
-				if (str[i] == '"')
-				{
-					tokens.push_back(token);
-					tokens.push_back({ str[i] });
-					token.clear();
-					state = 0;
-				}
-				else
-				{
-					token.push_back({ str[i] });
-				}
-				break;
-			}
-		}
-
-		JsonValue value;
-
-		if (value.init(tokens, 0) == -1)
-			return false;
-
 		Type& t = static_cast<Type&>(*this);
-
-		value.parse(t);
-		return true;
+		return cppson::loadFile(t, fileName);
 	}
+
 	using Meta = std::map<std::string, std::function<bool(Type*, JsonValue)> >;
 
 	static const Meta& getMeta()
@@ -392,6 +380,33 @@ protected:
 
 	static Meta meta;
 };
+
+
+template<typename T>
+bool loadFile(T& value, const std::string& fileName)
+{
+	std::ifstream file(fileName);
+
+	if (!file.is_open())
+		return false;
+
+	std::string str((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+	std::vector<std::string> tokens;
+
+	if (!tokenize(str, tokens))
+	{
+		return false;
+	}
+
+	JsonValue json;
+
+	if (json.init(tokens, 0) == -1)
+		return false;
+
+	json.parse(value);
+	return true;
+
+}
 
 template<typename T>
 typename Parsable<T>::Meta Parsable<T>::meta;

@@ -28,5 +28,15 @@ int main()
 		printf("parse failed.\n");
 	}
 
+	std::vector<int> test2;
+
+	if (cppson::loadFile(test2, "test2.json"))
+	{
+		for (auto t : test2)
+		{
+			printf("%d ", t);
+		}
+	}
+
 	return 0;
 }
