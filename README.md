@@ -41,7 +41,7 @@ int main()
 }
 ```
 
-```json file
+```json
 //test.json
 {
 	"field1" : 1,
