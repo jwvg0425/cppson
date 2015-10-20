@@ -6,6 +6,11 @@ cpp json utility.
 # Setup
 just add 'src/cppson.hpp' file to your project.
 
+# Branch
+- master : simple version. use own parsing system(inefficient, slow, unstable).
+
+- jsoncpp-compatible : use jsoncpp to parse json file. recommand to use this version.
+
 # Requirement
 - Visual studio 2013 + 
 
