@@ -5,6 +5,7 @@
 #include <fstream>
 #include <functional>
 #include <vector>
+#include <list>
 #ifndef OUT
 #define OUT
 #endif
@@ -187,13 +188,40 @@ public:
 	}
 
 	template<typename T>
+	bool parse(std::list<T>& val)
+	{
+		static_assert(std::is_base_of<Parsable<T>, T>::value ||
+			std::is_same<int, T>::value ||
+			std::is_same<float, T>::value ||
+			std::is_same<double, T>::value ||
+			std::is_same<std::string, T>::value ||
+			std::is_same<bool, T>::value, "T must be derived from Parsable<T>, or T must be int or float or double or std::string or bool.");
+	
+		if (type != ARRAY)
+			return false;
+
+		for (auto v : arr)
+		{
+			T p;
+
+			if (v.parse(p))
+				val.push_back(p);
+			else
+				return false;
+		}
+
+		return true;
+	}
+
+	template<typename T>
 	bool parse(std::vector<T>& val)
 	{
 		static_assert(std::is_base_of<Parsable<T>, T>::value ||
 					std::is_same<int, T>::value ||
+					std::is_same<float, T>::value ||
 					std::is_same<double, T>::value ||
 					std::is_same<std::string, T>::value ||
-					std::is_same<bool, T>::value, "T must be derived from Parsable<T>, or T must be int or double or std::string or bool.");
+					std::is_same<bool, T>::value, "T must be derived from Parsable<T>, or T must be int or float or double or std::string or bool.");
 
 		if (type != ARRAY)
 			return false;
@@ -390,7 +418,6 @@ public:
 	}
 
 protected:
-
 	static Meta meta;
 };
 
