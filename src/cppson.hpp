@@ -34,56 +34,6 @@ type name;
 
 namespace cppson
 {
-
-class Single
-{
-public:
-	template<typename R>
-	R getValue()
-	{
-		static_assert(false, "invalid call.");
-	}
-
-	template<>
-	int getValue<int>()
-	{
-		return atoi(str.c_str());
-	}
-
-	template<>
-	bool getValue<bool>()
-	{
-		if (str == "true")
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	template<>
-	double getValue<double>()
-	{
-		return atof(str.c_str());
-	}
-
-	template<>
-	std::string getValue<std::string>()
-	{
-		return str;
-	}
-
-	std::string& getStr()
-	{
-		return str;
-	}
-
-private:
-	std::string str;
-};
-
 class JsonValue
 {
 public:
