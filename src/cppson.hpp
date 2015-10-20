@@ -15,9 +15,10 @@ struct Init_ ## name \
 {\
 	Init_ ## name ## () \
 	{ \
-		meta[ #name ] = [](Type* t, cppson::JsonValue value) -> bool \
+		meta[ #name ] = [](Type* t, Json::Value value) -> bool \
 		{ \
-			return value.parse(t->name); \
+			cppson::JsonValue& v = (cppson::JsonValue)value;\
+			return v.parse(t->name); \
 		}; \
 	} \
 };\
@@ -34,18 +35,18 @@ type name;
 
 namespace cppson
 {
-class JsonValue
+class JsonValue : public Json::Value
 {
 public:
 
 	JsonValue() = default;
-	JsonValue(const Json::Value& value) : json(value) {}
+	JsonValue(const Json::Value& value) : Json::Value(value) {}
 	
 	//if failed, return false
 	bool init(const std::string& str)
 	{
 		Json::Reader reader;
-		return reader.parse(str.c_str(), json);
+		return reader.parse(str.c_str(), *this);
 	}
 
 	template<typename T>
@@ -53,16 +54,16 @@ public:
 	{
 		static_assert(std::is_base_of<Parsable<T>, T>::value, "T must be derived from Parsable<T>");
 
-		if (!json.isObject())
+		if (!isObject())
 		{
 			return false;
 		}
 
-		auto members = json.getMemberNames();
+		auto members = getMemberNames();
 
 		for (auto m : members)
 		{
-			if (!T::getMeta().at(m)(&val, json.get(m, Json::nullValue)))
+			if (!T::getMeta().at(m)(&val, get(m, Json::nullValue)))
 			{
 				return false;
 			}
@@ -80,13 +81,13 @@ public:
 					std::is_same<std::string, T>::value ||
 					std::is_same<bool, T>::value, "T must be derived from Parsable<T>, or T must be int or double or std::string or bool.");
 
-		if (!json.isArray())
+		if (!isArray())
 			return false;
 
-		for (auto v : json)
+		for (auto v : *this)
 		{
 			T p;
-			JsonValue jsonVal(v);
+			JsonValue& jsonVal = (JsonValue)v;
 
 			if (jsonVal.parse(p))
 				val.push_back(p);
@@ -100,10 +101,10 @@ public:
 	template<>
 	bool parse<int>(int& val)
 	{
-		if (!json.isInt())
+		if (!isInt())
 			return false;
 
-		val = json.asInt();
+		val = asInt();
 
 		return true;
 	}
@@ -111,10 +112,10 @@ public:
 	template<>
 	bool parse<double>(double& val)
 	{
-		if (!json.isDouble())
+		if (!isDouble())
 			return false;
 
-		val = json.asDouble();
+		val = asDouble();
 
 		return true;
 	}
@@ -122,10 +123,10 @@ public:
 	template<>
 	bool parse<float>(float& val)
 	{
-		if (!json.isDouble())
+		if (!isDouble())
 			return false;
 
-		val = json.asFloat();
+		val = asFloat();
 
 		return true;
 	}
@@ -133,14 +134,14 @@ public:
 	template<>
 	bool parse<bool>(bool& val)
 	{
-		if (json.isBool())
+		if (isBool())
 		{
-			val = json.asBool();
+			val = asBool();
 			return true;
 		}
-		else if (json.isString())
+		else if (isString())
 		{
-			std::string str = json.asString();
+			std::string str = asString();
 			if (str == "true")
 			{
 				val = true;
@@ -165,16 +166,13 @@ public:
 	template<>
 	bool parse<std::string>(std::string& val)
 	{
-		if (!json.isString())
+		if (!isString())
 			return false;
 
-		val = json.asString();
+		val = asString();
 
 		return true;
 	}
-
-private:
-	Json::Value json;
 };
 
 template<typename T>
@@ -189,7 +187,7 @@ public:
 		return cppson::loadFile(t, fileName);
 	}
 
-	using Meta = std::map<std::string, std::function<bool(Type*, JsonValue)> >;
+	using Meta = std::map<std::string, std::function<bool(Type*, Json::Value)> >;
 
 	static const Meta& getMeta()
 	{
