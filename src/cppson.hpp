@@ -71,6 +71,11 @@ public:
 		return str;
 	}
 
+	std::string& GetStr()
+	{
+		return str;
+	}
+
 private:
 	std::string str;
 };
@@ -78,8 +83,77 @@ private:
 class JsonValue
 {
 public:
-	JsonValue(std::string str)
+	
+	//if failed, return -1
+	int init(std::vector<std::string>& tokens, int offset)
 	{
+		//object
+		if (tokens[offset] == "{")
+		{
+			type = OBJECT;
+			offset++;
+			
+			while (tokens[offset] != "}")
+			{
+				if (tokens[offset] == "\"")
+				{
+					std::string& key = tokens[offset + 1];
+
+					if (tokens[offset + 2] != "\"" || tokens[offset + 3] != ":")
+						return -1;
+
+					offset = obj[key].init(tokens, offset + 4);
+
+					if (offset == -1)
+						return -1;
+				}
+				else if (tokens[offset] == ",")
+				{
+					offset++;
+				}
+				else
+				{
+					return -1;
+				}
+			}
+			return offset + 1;
+		}
+		else if (tokens[offset] == "[")
+		{
+			type = ARRAY;
+			offset++;
+			while (tokens[offset] != "]")
+			{
+				if (tokens[offset] == ",")
+				{
+					offset++;
+				}
+				else
+				{
+					JsonValue value;
+					offset = value.init(tokens, offset);
+					if (offset == -1)
+						return -1;
+
+					arr.push_back(value);
+				}
+			}
+			return offset + 1;
+		}
+		else
+		{
+			type = SINGLE;
+			if (tokens[offset] == "\"")
+			{
+				single.GetStr() = tokens[offset + 1];
+				return offset + 3;
+			}
+			else
+			{
+				single.GetStr() = tokens[offset];
+				return offset + 1;
+			}
+		}
 	}
 
 	template<typename T>
@@ -206,12 +280,98 @@ public:
 
 	bool ParseFromString(const std::string& str)
 	{
-		JsonValue value(str);
+		std::vector<std::string> tokens;
+		std::string token;
+		std::string space = " \t\r\n";
+		std::string delim = ":{}[],";
+		std::string number = "0123456789.";
+		int state = 0;
+
+		for (size_t i = 0; i < str.size(); i++)
+		{
+			switch (state)
+			{
+			case 0:
+				//ignore space
+				if (space.find(str[i]) != std::string::npos)
+				{
+					if (token.size() != 0)
+					{
+						tokens.push_back(token);
+						token.clear();
+					}
+
+					continue;
+				}
+				//go string
+				else if (str[i] == '"')
+				{
+					if (token.size() != 0)
+						return false;
+
+					tokens.push_back({ str[i] });
+					state = 1;
+				}
+				//one char token
+				else if (delim.find(str[i]) != std::string::npos)
+				{
+					if (token.size() != 0)
+					{
+						tokens.push_back(token);
+						token.clear();
+					}
+					tokens.push_back({ str[i] });
+				}
+				//number
+				else if (number.find(str[i]) != std::string::npos)
+				{
+					token.push_back({ str[i] });
+				}
+				//true or false
+				else if (str.substr(i, 4) == "true")
+				{
+					if (token.size() != 0)
+						return false;
+
+					tokens.push_back(str.substr(i, 4));
+				}
+				else if (str.substr(i, 5) == "false")
+				{
+					if (token.size() != 0)
+						return false;
+
+					tokens.push_back(str.substr(i, 5));
+				}
+				else
+				{
+					return false;
+				}
+				break;
+			case 1:
+				if (str[i] == '"')
+				{
+					tokens.push_back(token);
+					tokens.push_back({ str[i] });
+					token.clear();
+					state = 0;
+				}
+				else
+				{
+					token.push_back({ str[i] });
+				}
+				break;
+			}
+		}
+
+		JsonValue value;
+
+		if (value.init(tokens, 0) == -1)
+			return false;
 
 		Type& t = static_cast<Type&>(*this);
 
 		value.parse(t);
-		return false;
+		return true;
 	}
 	using Meta = std::map<std::string, std::function<bool(Type*, JsonValue)> >;
 

@@ -3,19 +3,24 @@
 
 JSON_CLASS(Test)
 {
-public:
+private:
 	FIELD(std::vector<int>, a);
 	FIELD(int, b);
-	FIELD(double, c);
+};
+
+JSON_CLASS(Test2)
+{
+private:
+	FIELD(std::vector<Test>, tests);
+	FIELD(Test, test2);
 };
 
 int main()
 {
-	Test t;
+	Test2 t;
 
 	if (t.ParseFromFile("test.json"))
 	{
-		printf("%d %d %lf\n", t.a.size(), t.b, t.c);
 	}
 	else
 	{
