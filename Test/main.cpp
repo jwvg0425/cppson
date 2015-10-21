@@ -2,29 +2,30 @@
 #include "catch.hpp"
 #include "src/cppson.hpp"
 
+JSON_CLASS(NestedObject)
+{
+public:
+	FIELD(int, _int);
+	FIELD(bool, _bool);
+};
+JSON_CLASS(TestObject)
+{
+public:
+	FIELD(int, _int);
+	FIELD(bool, _bool);
+	FIELD(float, _float);
+	FIELD(double, _double);
+	FIELD(std::string, _string);
+
+	FIELD(std::vector<int>, _vector);
+
+	FIELD(NestedObject, _nested);
+};
+
 TEST_CASE("parse from string") 
 {
-	JSON_CLASS(NestedObject)
-	{
-	public:
-		FIELD(int, _int);
-		FIELD(bool, _bool);
-	};
-	JSON_CLASS(TestObject)
-	{
-	public:
-		FIELD(int, _int);
-		FIELD(bool, _bool);
-		FIELD(float, _float);
-		FIELD(double, _double);
-		FIELD(std::string, _string);
-
-		FIELD(std::vector<int>, _vector);
-
-		FIELD(NestedObject, _nested);
-	};
-
 	TestObject obj;
+
 	cppson::loadString(obj,
 		"{"
 		/* for 'basic types' section */
@@ -49,14 +50,14 @@ TEST_CASE("parse from string")
 		REQUIRE(obj._bool == true);
 		REQUIRE(obj._float == 2.13f);
 		REQUIRE(obj._double == 2.5);
-		REQUIRE(obj._string == "hello");
+		REQUIRE(obj._string.get() == "hello");
 	}
 	SECTION("std::vector type") {
-		REQUIRE(obj._vector.size() == 5);
+		REQUIRE(obj._vector->size() == 5);
 		REQUIRE(obj._vector == (std::vector<int>{1, 2, 3, 4, 5}));
 	}
 	SECTION("nested object") {
-		REQUIRE(obj._nested._int == 14);
-		REQUIRE(obj._nested._bool == false);
+		REQUIRE(obj._nested->_int == 14);
+		REQUIRE(obj._nested->_bool == false);
 	}
 }

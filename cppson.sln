@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{089B7073-9053-4A95-A80A-0205FE7FB076}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		README_Kor.md = README_Kor.md
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test\Test.vcxproj", "{7C138D6B-B02C-42D3-8C83-0616F6C7C6CD}"

@@ -21,19 +21,67 @@ struct Init_ ## name \
 		}; \
 	} \
 };\
-struct Meta_ ## name\
+template<typename T>\
+class Field_ ## name : public cppson::JsonField<T>\
 {\
-	Meta_ ## name ## ()\
+public:\
+	Field_ ## name ## ()\
 	{\
 		static Init_ ## name init;\
 	}\
 };\
-Meta_ ## name meta_ ## name;\
-type name;
+Field_ ## name ## <type> name;
 
 
 namespace cppson
 {
+
+template<typename T>
+class JsonField
+{
+public:
+	operator T()
+	{
+		return value;
+	}
+
+	T& get()
+	{
+		return value;
+	}
+
+	T& operator*()
+	{
+		return value;
+	}
+
+	T* operator->()
+	{
+		return &value;
+	}
+
+	T& operator=(T& rhs)
+	{
+		null = false;
+		value = rhs;
+	}
+
+	bool operator==(T& rhs)
+	{
+		return value == rhs;
+	}
+
+	bool isNull()
+	{
+		return null;
+	}
+
+protected:
+	T value;
+	bool null = true;
+
+	friend class JsonValue;
+};
 
 class Single
 {
@@ -163,6 +211,10 @@ public:
 			else
 			{
 				single.getStr() = tokens[offset];
+				if (tokens[offset] == "null")
+				{
+					type = NONE;
+				}
 				return offset + 1;
 			}
 		}
@@ -183,7 +235,19 @@ public:
 				return false;
 			}
 		}
+		return true;
+	}
 
+	template<template<typename> typename T, typename U>
+	bool parse(T<U>& val)
+	{
+		static_assert(std::is_base_of<JsonField<U>, T<U>>::value, "T<U> must be derived from JsonField<U>");
+		
+		if (type != NONE)
+		{
+			val.null = false;
+			return parse(val.get());
+		}
 		return true;
 	}
 
@@ -373,6 +437,14 @@ bool tokenize(const std::string& str, OUT std::vector<std::string>& tokens)
 
 				tokens.push_back(str.substr(i, 5));
 				i += 4;
+			}
+			else if (str.substr(i, 4) == "null")
+			{
+				if (token.size() != 0)
+					return false;
+
+				tokens.push_back(str.substr(i, 4));
+				i += 3;
 			}
 			else
 			{
