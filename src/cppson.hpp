@@ -15,7 +15,7 @@ struct Init_ ## name \
 {\
 	Init_ ## name ## () \
 	{ \
-		meta[ #name ] = [](Type* t, cppson::JsonValue value) -> bool \
+		meta[ #name ] = [](Type* t, cppson::JsonValue& value) -> bool \
 		{ \
 			return value.parse(t->name); \
 		}; \
@@ -176,7 +176,7 @@ public:
 		if (type != OBJECT)
 			return false;
 
-		for (auto m : obj)
+		for (auto& m : obj)
 		{
 			if (!T::getMeta().at(m.first)(&val, m.second))
 			{
@@ -200,12 +200,12 @@ public:
 		if (type != ARRAY)
 			return false;
 
-		for (auto v : arr)
+		for (auto& v : arr)
 		{
 			T p;
 
 			if (v.parse(p))
-				val.push_back(p);
+				val.push_back(std::move(p));
 			else
 				return false;
 		}
@@ -231,7 +231,7 @@ public:
 			T p;
 
 			if (v.parse(p))
-				val.push_back(p);
+				val.push_back(std::move(p));
 			else
 				return false;
 		}
@@ -410,7 +410,7 @@ public:
 		return cppson::loadFile(t, fileName);
 	}
 
-	using Meta = std::map<std::string, std::function<bool(Type*, JsonValue)> >;
+	using Meta = std::map<std::string, std::function<bool(Type*, JsonValue&)> >;
 
 	static const Meta& getMeta()
 	{
