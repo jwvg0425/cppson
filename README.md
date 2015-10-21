@@ -7,7 +7,7 @@ cpp json utility.
 just add 'src/cppson.hpp' file to your project.
 
 # Branch
-- master : simple version. use own parsing system(inefficient, slow, unstable).
+- v-1.0 : simple version. use own parsing system(inefficient, slow, unstable).
 
 - jsoncpp-compatible : use jsoncpp to parse json file. recommand to use this version.
 
