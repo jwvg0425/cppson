@@ -29,7 +29,13 @@ and not accept **null**.
 
 # How to use
 ```JSON_CLASS(className)``` macro create a class mapped to json file.  
-```FIELD(type, fieldName)``` macro create a field mapped to json key - value pair. FIELD macro create meta_fieldName field, but you don't need to bother.
+```FIELD(type, fieldName)``` macro create a field mapped to json key - value pair. member created by FIELD macro has below methods:
+
+- isNull : that field's value is null, return true.
+- get : return that field's inner value.
+- operator -> : if that field's inner value type is class or structure, using operator -> to access inner value's member.
+
+field type is compatible with that field's inner value type.
 
 and, call loadFile function(jsonClass.loadFile), automatically mapped json file to that class.
 
