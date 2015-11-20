@@ -1,7 +1,7 @@
 # cppson
 cpp json utility.
 
-[korean](https://github.com/jwvg0425/cppson/blob/master/README_Kor.md)  
+[korean](README_Kor.md)  
 
 # Setup
 just add 'src/cppson.hpp' file to your project.
@@ -24,8 +24,6 @@ just add 'src/cppson.hpp' file to your project.
 | string      | std::string    |
 | array       | std::vector<T> |
 | object      | JSON_CLASS     |
-
-and not accept **null**.
 
 # How to use
 ```JSON_CLASS(className)``` macro create a class mapped to json file.  
@@ -64,7 +62,7 @@ int main()
 	if(t.loadFile("test.json"))
 	{
 		printf("%d %d %d\n", t.field1, t.field2); //1 2
-		printf("%d\n", t.field3.size()); //0
+		printf("%d\n", t.field3->size()); //0
 	}
 	else
 	{
@@ -73,7 +71,7 @@ int main()
 
 	std::vector<int> vi;
 
-	if(vi.loadFile("test2.json"))
+	if(cppson::loadFile("test2.json"))
 	{
 		//1, 2, 3, 4, 5, 10
 		for(auto i : vi)
