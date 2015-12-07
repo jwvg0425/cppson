@@ -2,6 +2,14 @@
 #include "catch.hpp"
 #include "src/cppson.hpp"
 
+enum class TestEnum
+{
+	ONE = 1,
+	TWO = 2,
+	THREE = 3,
+	FOUR = 4
+};
+
 JSON_CLASS(NestedObject)
 {
 public:
@@ -18,6 +26,8 @@ public:
 	FIELD(std::string, _string);
 
 	FIELD(std::string, _null);
+
+	FIELD(TestEnum, _enum);
 
 	FIELD(std::vector<int>, _vector);
 
@@ -39,6 +49,9 @@ TEST_CASE("parse from string / save file / load file")
 
 		/* for 'null' section */
 		"\"_null\" : null,"
+
+		/* for 'enum' section */
+		"\"_enum\" : 3,"
 
 		/* for 'std::vector type' section */
 		"\"_vector\" : [1, 2, 3 ,4 ,5],"
@@ -66,6 +79,10 @@ TEST_CASE("parse from string / save file / load file")
 	SECTION("null") 
 	{
 		REQUIRE(obj._null.isNull());
+	}
+	SECTION("enum")
+	{
+		REQUIRE(obj._enum == TestEnum::THREE);
 	}
 	SECTION("std::vector type") 
 	{

@@ -84,11 +84,25 @@ public:
 		return reader.parse(str.c_str(), *this);
 	}
 
-	template<typename T>
+	template<typename T,
+		     typename = std::enable_if_t<std::is_enum<T>::value> >
 	bool parse(T& val)
 	{
-		static_assert(std::is_base_of<Parsable<T>, T>::value, "T must be derived from Parsable<T>");
+		if (!isIntegral())
+		{
+			return false;
+		}
 
+		val = static_cast<T>(asInt());
+
+		return true;
+	}
+
+	template<typename T,
+		     typename = std::enable_if_t<std::is_base_of<Parsable<T>, T>::value>,
+		     typename = void>
+	bool parse(T& val)
+	{
 		if (!isObject())
 		{
 			return false;
@@ -104,13 +118,13 @@ public:
 			}
 		}
 		return true;
+
 	}
 
-	template<template<typename> typename T, typename U>
+	template<template<typename> typename T, typename U,
+		typename = std::enable_if_t<std::is_base_of<JsonField<U>, T<U>>::value >>
 	bool parse(T<U>& val)
 	{
-		static_assert(std::is_base_of<JsonField<U>, T<U>>::value, "T<U> must be derived from JsonField<U>");
-		
 		if (!isNull())
 		{
 			val.null = false;
@@ -173,8 +187,7 @@ public:
 		return true;
 	}
 
-	template<>
-	bool parse<int>(int& val)
+	bool parse(int& val)
 	{
 		if (!isInt())
 			return false;
@@ -184,8 +197,7 @@ public:
 		return true;
 	}
 
-	template<>
-	bool parse<double>(double& val)
+	bool parse(double& val)
 	{
 		if (!isDouble())
 			return false;
@@ -195,8 +207,7 @@ public:
 		return true;
 	}
 
-	template<>
-	bool parse<float>(float& val)
+	bool parse(float& val)
 	{
 		if (!isDouble())
 			return false;
@@ -206,8 +217,7 @@ public:
 		return true;
 	}
 
-	template<>
-	bool parse<bool>(bool& val)
+	bool parse(bool& val)
 	{
 		if (isBool())
 		{
@@ -232,10 +242,11 @@ public:
 		{
 			return false;
 		}
+
+		return false;
 	}
 
-	template<>
-	bool parse<std::string>(std::string& val)
+	bool parse(std::string& val)
 	{
 		if (!isString())
 			return false;
@@ -362,11 +373,19 @@ template<typename T>
 typename Parsable<T>::ReadMeta Parsable<T>::readMeta;
 
 
-template<typename T>
+template<typename T,
+		 typename = std::enable_if_t<std::is_enum<T>::value> >
 std::string toJson(T& value)
 {
-	static_assert(std::is_base_of<Parsable<T>, T>::value, "T must be derived from Parsable<T>");
+	int v = static_cast<int>(value);
+	return toJson(v);
+}
 
+template<typename T,
+		 typename = std::enable_if_t<std::is_base_of<Parsable<T>, T>::value>,
+		 typename = void>
+std::string toJson(T& value)
+{
 	std::string res = "{";
 
 	auto& meta = T::getWriteMeta();
@@ -386,11 +405,10 @@ std::string toJson(T& value)
 	return res + "}";
 }
 
-template<template<typename> typename T, typename U>
+template<template<typename> typename T, typename U,
+		 typename = std::enable_if_t<std::is_base_of<JsonField<U>, T<U>>::value>>
 std::string toJson(T<U>& val)
 {
-	static_assert(std::is_base_of<JsonField<U>, T<U>>::value, "T<U> must be derived from JsonField<U>");
-
 	if (val.isNull())
 		return "null";
 
@@ -443,32 +461,27 @@ std::string toJson(std::vector<T>& val)
 	return res + "]";
 }
 
-template<>
-std::string toJson<int>(int& val)
+std::string toJson(int& val)
 {
 	return std::to_string(val);
 }
 
-template<>
-std::string toJson<double>(double& val)
+std::string toJson(float& val)
 {
 	return std::to_string(val);
 }
 
-template<>
-std::string toJson<float>(float& val)
+std::string toJson(double& val)
 {
 	return std::to_string(val);
 }
 
-template<>
-std::string toJson<bool>(bool& val)
+std::string toJson(bool& val)
 {
 	return val ? "true" : "false";
 }
 
-template<>
-std::string toJson<std::string>(std::string& val)
+std::string toJson(std::string& val)
 {
 	return "\"" + val + "\"";
 }
