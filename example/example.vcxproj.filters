@@ -21,12 +21,15 @@
     <ClCompile Include="..\src\jsoncpp.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\cppson.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\cppson.hpp">
+    <ClInclude Include="..\src\json.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\json.h">
+    <ClInclude Include="..\src\cppson.h">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
