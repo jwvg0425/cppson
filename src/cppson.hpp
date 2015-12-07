@@ -513,6 +513,12 @@ public:
 		return cppson::loadFile(t, fileName);
 	}
 
+	bool toJson(const std::string& fileName)
+	{
+		Type& t = static_cast<Type&>(*this);
+		return cppson::toJson(t, fileName);
+	}
+
 	using ReadMeta = std::map<std::string, std::function<bool(Type*, JsonValue&)> >;
 	using WriteMeta = std::vector<std::function<std::string(Type*)> >;
 
@@ -589,7 +595,7 @@ std::string toJson(T& value)
 
 	for (int i = 1; i < meta.size(); i++)
 	{
-		res += "," + (meta[1])(&value);
+		res += "," + (meta[i])(&value);
 	}
 
 	return res + "}";
@@ -688,6 +694,8 @@ bool toJson(T& value, const std::string& fileName)
 		return false;
 
 	file << toJson(value);
+
+	return true;
 }
 
 }

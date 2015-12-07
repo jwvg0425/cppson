@@ -22,11 +22,11 @@ public:
 	FIELD(NestedObject, _nested);
 };
 
-TEST_CASE("parse from string") 
+TEST_CASE("parse from string / save file / load file") 
 {
-	TestObject obj;
+	TestObject saveObj;
 
-	cppson::loadString(obj,
+	cppson::loadString(saveObj,
 		"{"
 		/* for 'basic types' section */
 		"\"_int\" : 5,"
@@ -44,6 +44,11 @@ TEST_CASE("parse from string")
 		"\"_bool\" : false"
 		"}"
 		"}");
+
+	saveObj.toJson("test.json");
+
+	TestObject obj;
+	obj.loadFile("test.json");
 
 	SECTION("basic types") {
 		REQUIRE(obj._int == 5);
