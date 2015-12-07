@@ -606,6 +606,9 @@ std::string toJson(T<U>& val)
 {
 	static_assert(std::is_base_of<JsonField<U>, T<U>>::value, "T<U> must be derived from JsonField<U>");
 
+	if (val.isNull())
+		return "null";
+
 	return toJson(val.get());
 }
 
