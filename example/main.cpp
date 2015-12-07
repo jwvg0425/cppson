@@ -3,14 +3,14 @@
 
 JSON_CLASS(Test)
 {
-private:
+public:
 	FIELD(std::vector<int>, a);
 	FIELD(int, b);
 };
 
 JSON_CLASS(Test2)
 {
-private:
+public:
 	FIELD(std::vector<Test>, tests);
 	FIELD(Test, test2);
 };
@@ -22,11 +22,15 @@ int main()
 	if (t.loadFile("test.json"))
 	{
 		printf("parse succed.\n");
+
+		printf("%d", t.test2->b);
 	}
 	else
 	{
 		printf("parse failed.\n");
 	}
+
+	printf("%s\n", cppson::toJson(t).c_str());
 
 	std::vector<int> test2;
 
