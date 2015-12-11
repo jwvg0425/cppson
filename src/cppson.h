@@ -263,7 +263,7 @@ template<typename T>
 class JsonField
 {
 public:
-	operator T()
+	operator T() const
 	{
 		return value;
 	}
