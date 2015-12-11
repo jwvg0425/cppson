@@ -22,7 +22,7 @@ struct Init_ ## name \
 			cppson::JsonValue& v = (cppson::JsonValue)value;\
 			return v.parse(t->name); \
 		}; \
-		writeMeta.push_back([](Type* t) -> std::string \
+		writeMeta.push_back([](const Type* t) -> std::string \
 		{ \
 			return std::string("\"") + std::string( #name ) + std::string("\"") + std::string(":") + cppson::toJson(t->name);\
 		}); \
@@ -36,6 +36,7 @@ public:\
 	{\
 		static Init_ ## name init;\
 	}\
+	Field_ ## name ## (Field_ ## name ## <T>& rhs) = default; \
 };\
 Field_ ## name ## <type> name;
 
@@ -48,7 +49,7 @@ struct Init_ ## name \
 		{ \
 			return value.parse(t->name); \
 		}; \
-		writeMeta.push_back([](Type* t) -> std::string \
+		writeMeta.push_back([](const Type* t) -> std::string \
 		{ \
 			return std::string("\"") + std::string( #key ) + std::string("\"") + std::string(":") + cppson::toJson(t->name);\
 		});\
@@ -62,6 +63,7 @@ public:\
 	{\
 		static Init_ ## name init;\
 	}\
+	Field_ ## name ## (Field_ ## name ## <T>& rhs) = default; \
 };\
 Field_ ## name ## <type> name;
 
@@ -128,7 +130,7 @@ public:
 		if (!isNull())
 		{
 			val.null = false;
-			return parse(val.get());
+			return parse(val.value);
 		}
 		return true;
 	}
@@ -266,33 +268,33 @@ public:
 		return value;
 	}
 
-	T& get()
+	void set(const T& rhs)
+	{
+		value = rhs;
+		null = false;
+	}
+
+	const T& get() const
 	{
 		return value;
 	}
 
-	T& operator*()
+	const T& operator*() const
 	{
 		return value;
 	}
 
-	T* operator->()
+	const T* operator->() const
 	{
 		return &value;
 	}
 
-	T& operator=(T& rhs)
-	{
-		null = false;
-		value = rhs;
-	}
-
-	bool operator==(T& rhs)
+	bool operator==(const T& rhs) const
 	{
 		return value == rhs;
 	}
-
-	bool isNull()
+	
+	bool isNull() const
 	{
 		return null;
 	}
@@ -300,6 +302,8 @@ public:
 protected:
 	T value;
 	bool null = true;
+
+private:
 
 	friend class JsonValue;
 };
@@ -323,7 +327,7 @@ public:
 	}
 
 	using ReadMeta = std::map<std::string, std::function<bool(Type*, JsonValue&)> >;
-	using WriteMeta = std::vector<std::function<std::string(Type*)> >;
+	using WriteMeta = std::vector<std::function<std::string(const Type*)> >;
 
 	static const ReadMeta& getReadMeta()
 	{
@@ -375,7 +379,7 @@ typename Parsable<T>::ReadMeta Parsable<T>::readMeta;
 
 template<typename T,
 		 typename = std::enable_if_t<std::is_enum<T>::value> >
-std::string toJson(T& value)
+std::string toJson(const T& value)
 {
 	int v = static_cast<int>(value);
 	return toJson(v);
@@ -384,7 +388,7 @@ std::string toJson(T& value)
 template<typename T,
 		 typename = std::enable_if_t<std::is_base_of<Parsable<T>, T>::value>,
 		 typename = void>
-std::string toJson(T& value)
+std::string toJson(const T& value)
 {
 	std::string res = "{";
 
@@ -407,7 +411,7 @@ std::string toJson(T& value)
 
 template<template<typename> typename T, typename U,
 		 typename = std::enable_if_t<std::is_base_of<JsonField<U>, T<U>>::value>>
-std::string toJson(T<U>& val)
+std::string toJson(const T<U>& val)
 {
 	if (val.isNull())
 		return "null";
@@ -416,7 +420,7 @@ std::string toJson(T<U>& val)
 }
 
 template<typename T>
-std::string toJson(std::list<T>& val)
+std::string toJson(const std::list<T>& val)
 {
 	static_assert(std::is_base_of<Parsable<T>, T>::value ||
 		std::is_same<int, T>::value ||
@@ -439,7 +443,7 @@ std::string toJson(std::list<T>& val)
 }
 
 template<typename T>
-std::string toJson(std::vector<T>& val)
+std::string toJson(const std::vector<T>& val)
 {
 	static_assert(std::is_base_of<Parsable<T>, T>::value ||
 		std::is_same<int, T>::value ||
@@ -461,11 +465,11 @@ std::string toJson(std::vector<T>& val)
 	return res + "]";
 }
 
-std::string toJson(int& val);
-std::string toJson(float& val);
-std::string toJson(double& val);
-std::string toJson(bool& val);
-std::string toJson(std::string& val);
+std::string toJson(int val);
+std::string toJson(float val);
+std::string toJson(double val);
+std::string toJson(bool val);
+std::string toJson(const std::string& val);
 
 template<typename T>
 bool toJson(T& value, const std::string& fileName)
