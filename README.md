@@ -4,10 +4,10 @@ cpp json utility.
 [korean](README_Kor.md)  
 
 # Setup
-just add 'src/cppson.hpp' file to your project.
+just add a 'src/cppson.hpp' file to your project.
 
 # Branch
-- v-1.0 : simple version. use own parsing system(inefficient, slow, unstable).
+- v-1.0 : A zero-dependency version which uses its own parsing system (inefficient, slow, unstable).
 
 - jsoncpp-compatible : use jsoncpp to parse json file. recommand to use this version.
 
@@ -26,10 +26,10 @@ just add 'src/cppson.hpp' file to your project.
 | object      | JSON_CLASS     |
 
 # How to use
-```JSON_CLASS(className)``` macro create a class mapped to json file.  
-```FIELD(type, fieldName)``` macro create a field mapped to json key - value pair. member created by FIELD macro has below methods:
+```JSON_CLASS(className)``` macro that creates a class mapped to json file.  
+```FIELD(type, fieldName)``` macro that creates a field mapped to json key - value pair. member created by FIELD macro has below methods:
 
-- isNull : that field's value is null, return true.
+- isNull : whether the field has a value or not.
 - get : return that field's inner value.
 - operator -> : if that field's inner value type is class or structure, using operator -> to access inner value's member.
 
@@ -39,7 +39,7 @@ and, call loadFile function(jsonClass.loadFile), automatically mapped json file 
 
 parse vector from json file, use cppson::loadFile function.
 
-see below example.
+See the example below.
 
 ## Example
 
